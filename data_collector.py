@@ -1,6 +1,7 @@
 from __future__ import print_function
-
 import os.path
+from current_month import current_month
+from sheet_id import sheet_id
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -12,15 +13,11 @@ from googleapiclient.errors import HttpError
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
 # The ID and range of a sample spreadsheet.
-SAMPLE_SPREADSHEET_ID = '1xQQ1qPgqhygtH_vczhV8rl-CTZSyCrOVGACJQyp0r5M'
+SAMPLE_SPREADSHEET_ID = sheet_id
 
-SAMPLE_RANGE_NAME = 'Декабрь'
-
-
-def main():
-    """Shows basic usage of the Sheets API.
-    Prints values from a sample spreadsheet.
-    """
+SAMPLE_RANGE_NAME = current_month
+test = None
+def data_collector():
     creds = None
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
@@ -38,7 +35,6 @@ def main():
         # Save the credentials for the next run
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
-
     try:
         service = build('sheets', 'v4', credentials=creds)
 
@@ -47,17 +43,15 @@ def main():
         result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
                                     range=SAMPLE_RANGE_NAME).execute()
         values = result.get('values', [])
-
         if not values:
             print('No data found.')
             return
 
-        print('Name, Major:')
-        for row in values:
-            print(row)
+        return(values)
+
     except HttpError as err:
         print(err)
 
+if __name__ =='__main__':
+    data_collector()
 
-if __name__ == '__main__':
-    main()
